@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Sparkles,
@@ -21,9 +21,8 @@ import {
 } from "lucide-react";
 import { BookBlueprint, ChapterOutline } from "@/types";
 
-export default function BlueprintPage() {
+function BlueprintContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   
   const [blueprint, setBlueprint] = useState<BookBlueprint | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +31,6 @@ export default function BlueprintPage() {
   const [selectedSubtitle, setSelectedSubtitle] = useState(0);
 
   useEffect(() => {
-    // Get blueprint from sessionStorage (set by interview page)
     const storedBlueprint = sessionStorage.getItem("bookBlueprint");
     if (storedBlueprint) {
       setBlueprint(JSON.parse(storedBlueprint));
@@ -46,13 +44,9 @@ export default function BlueprintPage() {
     setIsCreating(true);
     
     try {
-      // Create the book
       const bookResponse = await fetch("/api/books", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // TODO: Add auth header
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: blueprint.title,
           subtitle: blueprint.subtitle_options[selectedSubtitle],
@@ -64,29 +58,17 @@ export default function BlueprintPage() {
         }),
       });
 
-      if (!bookResponse.ok) {
-        throw new Error("Failed to create book");
-      }
-
+      if (!bookResponse.ok) throw new Error("Failed to create book");
       const { data: book } = await bookResponse.json();
 
-      // Create chapters
       const chaptersResponse = await fetch("/api/chapters", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          book_id: book.id,
-          chapters: blueprint.chapters,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ book_id: book.id, chapters: blueprint.chapters }),
       });
 
-      if (!chaptersResponse.ok) {
-        throw new Error("Failed to create chapters");
-      }
+      if (!chaptersResponse.ok) throw new Error("Failed to create chapters");
 
-      // Clear sessionStorage and redirect to book editor
       sessionStorage.removeItem("bookBlueprint");
       router.push(`/books/${book.id}`);
     } catch (error) {
@@ -99,7 +81,6 @@ export default function BlueprintPage() {
 
   const updateChapter = (index: number, updates: Partial<ChapterOutline>) => {
     if (!blueprint) return;
-    
     const newChapters = [...blueprint.chapters];
     newChapters[index] = { ...newChapters[index], ...updates };
     setBlueprint({ ...blueprint, chapters: newChapters });
@@ -107,14 +88,12 @@ export default function BlueprintPage() {
 
   const removeChapter = (index: number) => {
     if (!blueprint) return;
-    
     const newChapters = blueprint.chapters.filter((_, i) => i !== index);
     setBlueprint({ ...blueprint, chapters: newChapters });
   };
 
   const addChapter = () => {
     if (!blueprint) return;
-    
     const newChapter: ChapterOutline = {
       title: "New Chapter",
       summary: "Chapter summary goes here...",
@@ -122,15 +101,6 @@ export default function BlueprintPage() {
       sections: [],
     };
     setBlueprint({ ...blueprint, chapters: [...blueprint.chapters, newChapter] });
-  };
-
-  const moveChapter = (fromIndex: number, toIndex: number) => {
-    if (!blueprint) return;
-    
-    const newChapters = [...blueprint.chapters];
-    const [removed] = newChapters.splice(fromIndex, 1);
-    newChapters.splice(toIndex, 0, removed);
-    setBlueprint({ ...blueprint, chapters: newChapters });
   };
 
   if (isLoading) {
@@ -150,10 +120,7 @@ export default function BlueprintPage() {
           <p className="text-muted-foreground mb-4">
             Please complete the interview to generate a book blueprint.
           </p>
-          <Link
-            href="/interview"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg"
-          >
+          <Link href="/interview" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg">
             Start Interview
           </Link>
         </div>
@@ -165,7 +132,6 @@ export default function BlueprintPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
-      {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/interview" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
@@ -180,7 +146,6 @@ export default function BlueprintPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Book Header */}
         <div className="bg-background rounded-2xl border p-8 mb-8">
           <div className="flex items-start justify-between mb-6">
             <div>
@@ -191,9 +156,7 @@ export default function BlueprintPage() {
                     key={index}
                     onClick={() => setSelectedSubtitle(index)}
                     className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                      selectedSubtitle === index
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted hover:bg-muted/80"
+                      selectedSubtitle === index ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/80"
                     }`}
                   >
                     {subtitle}
@@ -209,21 +172,17 @@ export default function BlueprintPage() {
           <p className="text-muted-foreground mb-6">{blueprint.description}</p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard icon={<FileText />} label="Chapters" value={blueprint.chapters.length.toString()} />
-            <StatCard icon={<Target />} label="Target Words" value={totalWords.toLocaleString()} />
-            <StatCard icon={<Users />} label="Audience" value={blueprint.target_audience.split(" ").slice(0, 3).join(" ") + "..."} />
-            <StatCard icon={<Sparkles />} label="Est. Credits" value={blueprint.estimated_credits.toString()} />
+            <StatCard icon={<FileText className="h-4 w-4" />} label="Chapters" value={blueprint.chapters.length.toString()} />
+            <StatCard icon={<Target className="h-4 w-4" />} label="Target Words" value={totalWords.toLocaleString()} />
+            <StatCard icon={<Users className="h-4 w-4" />} label="Audience" value={blueprint.target_audience.split(" ").slice(0, 3).join(" ") + "..."} />
+            <StatCard icon={<Sparkles className="h-4 w-4" />} label="Est. Credits" value={blueprint.estimated_credits.toString()} />
           </div>
         </div>
 
-        {/* Chapters */}
         <div className="bg-background rounded-2xl border p-8 mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold">Chapter Outline</h2>
-            <button
-              onClick={addChapter}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-muted rounded-lg hover:bg-muted/80"
-            >
+            <button onClick={addChapter} className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-muted rounded-lg hover:bg-muted/80">
               <Plus className="h-4 w-4" />
               Add Chapter
             </button>
@@ -231,10 +190,7 @@ export default function BlueprintPage() {
 
           <div className="space-y-4">
             {blueprint.chapters.map((chapter, index) => (
-              <div
-                key={index}
-                className="border rounded-lg p-4 hover:border-primary/50 transition-colors"
-              >
+              <div key={index} className="border rounded-lg p-4 hover:border-primary/50 transition-colors">
                 <div className="flex items-start gap-4">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <GripVertical className="h-5 w-5 cursor-grab" />
@@ -253,10 +209,7 @@ export default function BlueprintPage() {
                         autoFocus
                       />
                     ) : (
-                      <h3
-                        className="font-semibold cursor-pointer hover:text-primary"
-                        onClick={() => setEditingChapter(index)}
-                      >
+                      <h3 className="font-semibold cursor-pointer hover:text-primary" onClick={() => setEditingChapter(index)}>
                         {chapter.title}
                       </h3>
                     )}
@@ -267,9 +220,7 @@ export default function BlueprintPage() {
                         <p className="text-xs text-muted-foreground mb-2">Sections:</p>
                         <div className="space-y-1">
                           {chapter.sections.map((section, sIndex) => (
-                            <p key={sIndex} className="text-sm">
-                              {sIndex + 1}. {section.title}
-                            </p>
+                            <p key={sIndex} className="text-sm">{sIndex + 1}. {section.title}</p>
                           ))}
                         </div>
                       </div>
@@ -277,19 +228,11 @@ export default function BlueprintPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                      {chapter.target_word_count.toLocaleString()} words
-                    </span>
-                    <button
-                      onClick={() => setEditingChapter(index)}
-                      className="p-1.5 hover:bg-muted rounded"
-                    >
+                    <span className="text-sm text-muted-foreground">{chapter.target_word_count.toLocaleString()} words</span>
+                    <button onClick={() => setEditingChapter(index)} className="p-1.5 hover:bg-muted rounded">
                       <Edit2 className="h-4 w-4" />
                     </button>
-                    <button
-                      onClick={() => removeChapter(index)}
-                      className="p-1.5 hover:bg-destructive/10 hover:text-destructive rounded"
-                    >
+                    <button onClick={() => removeChapter(index)} className="p-1.5 hover:bg-destructive/10 hover:text-destructive rounded">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -299,7 +242,6 @@ export default function BlueprintPage() {
           </div>
         </div>
 
-        {/* Research & Media Needs */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="bg-background rounded-2xl border p-6">
             <h3 className="font-semibold mb-4">Research Needs</h3>
@@ -325,12 +267,8 @@ export default function BlueprintPage() {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center justify-between">
-          <Link
-            href="/interview"
-            className="px-4 py-2 text-muted-foreground hover:text-foreground"
-          >
+          <Link href="/interview" className="px-4 py-2 text-muted-foreground hover:text-foreground">
             ← Restart Interview
           </Link>
           <button
@@ -365,5 +303,17 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
       </div>
       <p className="font-semibold truncate">{value}</p>
     </div>
+  );
+}
+
+export default function BlueprintPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <BlueprintContent />
+    </Suspense>
   );
 }
