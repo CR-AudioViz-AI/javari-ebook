@@ -160,5 +160,8 @@ export type UserProfile = {
 
 export { SUPABASE_URL, SUPABASE_ANON_KEY }
 
+// Re-export for compatibility with code expecting createServerClient
+export { createSupabaseServerClient as createServerClient }
+
 // Default export for ESM compatibility
 export default supabase
