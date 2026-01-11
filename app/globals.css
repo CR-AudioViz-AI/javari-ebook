@@ -4,48 +4,71 @@
 
 @layer base {
   :root {
+    /* Official CR AudioViz AI Brand Colors */
+    --cr-navy: #1E3A5F;
+    --cr-red: #E31937;
+    --cr-cyan: #00B4D8;
+    
+    /* Semantic Colors */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 210 40% 20%;
+    
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 20%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 210 40% 20%;
+    
+    --primary: 207 69% 24%;        /* Navy 600 */
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 195 100% 42%;     /* Cyan 500 */
+    --secondary-foreground: 0 0% 100%;
+    
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    
+    --accent: 351 82% 50%;         /* Red 600 */
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 351 82% 50%;    /* Red 600 */
+    --destructive-foreground: 0 0% 100%;
+    
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --ring: 207 69% 24%;           /* Navy 600 */
+    
     --radius: 0.5rem;
   }
-
+  
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 210 60% 6%;      /* Navy 900 */
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    
+    --card: 210 50% 8%;            /* Navy 850 */
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    
+    --popover: 210 50% 8%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
+    
+    --primary: 195 100% 42%;       /* Cyan 500 */
+    --primary-foreground: 210 40% 6%;
+    
+    --secondary: 207 69% 24%;      /* Navy 600 */
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 210 50% 15%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    
+    --accent: 351 82% 50%;         /* Red 600 */
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 351 82% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 210 50% 15%;
+    --input: 210 50% 15%;
+    --ring: 195 100% 42%;
   }
 }
 
@@ -55,72 +78,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
-}
-
-/* TipTap Editor Styles */
-.ProseMirror {
-  @apply min-h-[300px] outline-none;
-}
-
-.ProseMirror p.is-editor-empty:first-child::before {
-  @apply text-muted-foreground pointer-events-none float-left h-0;
-  content: attr(data-placeholder);
-}
-
-.ProseMirror h1 {
-  @apply text-3xl font-bold mt-6 mb-4;
-}
-
-.ProseMirror h2 {
-  @apply text-2xl font-bold mt-5 mb-3;
-}
-
-.ProseMirror h3 {
-  @apply text-xl font-bold mt-4 mb-2;
-}
-
-.ProseMirror p {
-  @apply my-2 leading-relaxed;
-}
-
-.ProseMirror ul, .ProseMirror ol {
-  @apply pl-6 my-2;
-}
-
-.ProseMirror li {
-  @apply my-1;
-}
-
-.ProseMirror blockquote {
-  @apply border-l-4 border-primary/50 pl-4 italic my-4;
-}
-
-.ProseMirror code {
-  @apply bg-muted px-1 py-0.5 rounded text-sm font-mono;
-}
-
-.ProseMirror pre {
-  @apply bg-muted p-4 rounded-lg my-4 overflow-x-auto;
-}
-
-.ProseMirror a {
-  @apply text-primary underline underline-offset-2;
-}
-
-.ProseMirror img {
-  @apply max-w-full h-auto rounded-lg my-4;
-}
-
-.ProseMirror table {
-  @apply border-collapse w-full my-4;
-}
-
-.ProseMirror th, .ProseMirror td {
-  @apply border border-border p-2;
-}
-
-.ProseMirror th {
-  @apply bg-muted font-semibold;
 }
