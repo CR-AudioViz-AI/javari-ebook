@@ -21,7 +21,7 @@ const BOOK_TYPES = [
   { name: 'Fiction & Novels',      icon: '📖', color: 'from-purple-500 to-violet-600' },
   { name: 'Health & Wellness',     icon: '🌿', color: 'from-green-400 to-emerald-500' },
   { name: 'Cookbooks & Recipes',   icon: '🍳', color: 'from-orange-400 to-amber-500' },
-  { name: 'Children's Books',     icon: '🌈', color: 'from-pink-400 to-rose-500' },
+  { name: "Children's Books",     icon: '🌈', color: 'from-pink-400 to-rose-500' },
   { name: 'Memoirs & Biography',   icon: '✍️', color: 'from-amber-400 to-orange-500' },
   { name: 'Academic & Research',   icon: '🎓', color: 'from-cyan-500 to-blue-600' },
 ];
