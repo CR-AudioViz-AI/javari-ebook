@@ -1,4 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "github": { "autoAlias": false, "autoJobCancelation": true }
+  "github": {
+    "autoAlias": false,
+    "autoJobCancelation": true
+  },
+  "installCommand": "npm install --legacy-peer-deps"
 }
