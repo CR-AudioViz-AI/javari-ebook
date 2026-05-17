@@ -1,21 +1,31 @@
-// app/layout.tsx — Javari eBook Creator — CR AudioViz AI — Created: 2026-03-15
-import type { Metadata } from 'next';
-import Script from 'next/script';
-import './globals.css';
+// app/layout.tsx — Javari Books
+// Fortune 50 quality — uses AppShell for full ecosystem integration
+// May 17, 2026 — CR AudioViz AI, LLC
+import type { Metadata } from 'next'
+import './globals.css'
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Javari eBook Creator | CR AudioViz AI',
-  description: 'AI-powered eBook builder — create, design, and publish professional digital books in minutes. Part of the CR AudioViz AI creative ecosystem.',
-};
+  title: 'Javari Books | Javari by CR AudioViz AI',
+  description: 'AI eBook and publication creator',
+  keywords: 'Javari Books, Javari, AI, CR AudioViz AI',
+}
+
+import AppShell from '@/components/AppShell'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head><meta name="viewport" content="width=device-width, initial-scale=1" /></head>
-      <body className="min-h-screen bg-white dark:bg-gray-950">
-        {children}
-        <Script src="https://javariai.com/embed.js" strategy="lazyOnload" />
+      <body style={{ margin: 0, padding: 0 }}>
+        <AppShell
+          appName="Javari Books"
+          appColor="#10b981"
+          appEmoji="📚"
+          appDesc="AI eBook and publication creator"
+        >
+          {children}
+        </AppShell>
       </body>
     </html>
-  );
+  )
 }
